@@ -1,0 +1,51 @@
+services:
+  backend:
+    container_name: 'backend'
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    image: backend-compose
+    restart: always
+    ports:
+      - '4000:3001'
+    env_file: .env
+    # depends_on:
+    # - postgres
+    networks:
+      - internal
+
+  frontend:
+    container_name: 'frontend'
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    image: frontend-compose
+    restart: always
+    ports:
+      - '8080:80'
+    networks:
+      - external
+
+  postgres: 
+    container_name: 'postgres'
+    image: postgres:alpine
+    env_file: .env
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - internal 
+
+volumes:
+ pg_data: {}
+
+# networks:
+# external:
+# internal:
+networks:
+  external:
+    driver: bridge
+  internal:
+    driver: bridge
+
+
